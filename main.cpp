@@ -655,6 +655,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 	
 
+
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -671,7 +672,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	descriptionRootSignature.pStaticSamplers = staticSamplers;
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
-
+	
+	
 
 	////RootParameter作成.PixelShaderのMaterialとVertexShaderのTransform
 	D3D12_ROOT_PARAMETER rootParameters[3] = {};
@@ -703,6 +705,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
 	assert(SUCCEEDED(hr));
 
+
+
 	//InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -717,8 +721,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	inputLayoutDesc.pInputElementDescs= inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 
-	//BlendStateの設定
+  
+
 	D3D12_BLEND_DESC blendDesc{};
+
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	enum BlendMode {
+		kBlendModeNone,
+		kBlendModeNormal,
+		kBlendModeAdd,
+		kBlendModeSubtract,
+		kBlendModeMultily,
+		kBlendModeScreen,
+		kCountOfBlendMode,
+
+	};
+
 	//すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask =
 		D3D12_COLOR_WRITE_ENABLE_ALL;
@@ -814,8 +840,6 @@ DirectX::ScratchImage mipImages = LoadTexture("resource/uvChecker.png");
 const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 ID3D12Resource* textureResource = CreateTextureResorce(device, metadata);
 UploadTextureData(textureResource, mipImages);
-	//583
-
 	//ビューポート
 	D3D12_VIEWPORT viewport{};
 	//クライアント領域のサイズと一よにして画面全体に表示
@@ -853,6 +877,7 @@ UploadTextureData(textureResource, mipImages);
 	//SRVの生成
 	device->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
 
+	
 
 	MSG msg{};
 
