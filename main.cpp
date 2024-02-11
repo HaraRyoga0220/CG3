@@ -1018,6 +1018,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//ImGuiの内部コマンドを生産する
 			ImGui::Render();
 
+
 			//画面に描く処理は終わり、画面に映すので、状態を遷移
 			
 			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
